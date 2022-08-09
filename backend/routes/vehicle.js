@@ -55,7 +55,18 @@ router.get('/get', async (req, res) => {
 
 router.put('/update/:id', async (req, res) => {
     let id = req.params.id;
-    const data = req.body;
+    const {name, nic, mobile, model, plate} = req.body;
+
+    PlateValidater(plate);
+
+    const data = {
+        name,
+        nic,
+        mobile,
+        model,
+        plate,
+        variant
+    }
 
     await Vehicle.findByIdAndUpdate(id, data).then((result) => {
         res.json(result);

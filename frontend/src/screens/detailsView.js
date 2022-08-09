@@ -6,7 +6,7 @@ import './style.css';
 
 function ViewDetails() {
 
-    const [search, setSearch] = useState();
+    const [error, setError] = useState();
     const [vehicles, setVehicles] = useState([]);
     const [editID, setEditID] = useState();
     const [edits, setEdits] = useState({
@@ -17,7 +17,15 @@ function ViewDetails() {
         plate: ""
     });
 
-    let navigate = useNavigate();
+    function useRegex(plate) {
+        let regex1 = /^\d{2}\s?ශ්‍රී\s?\d{4}$/i;
+        let regex2 = /^\d{2}\s?-\s?\d{4}$/i;
+        let regex3 = /^([A-Z]{2}\s)?[A-Z]{2,3}\s?-\s?\d{4}$/i;
+        
+        if ((regex1.test(plate)) || (regex2.test(plate)) || (regex3.test(plate))) {
+            return true;
+        }
+    }
 
     useEffect(() => {
         axios.get("http://localhost:5000/api/get").then((res) => {
@@ -36,7 +44,8 @@ function ViewDetails() {
             nic: vehicle.nic,
             mobile: vehicle.mobile,
             model: vehicle.model,
-            plate: vehicle.plate
+            plate: vehicle.plate,
+            variant: vehicle.variant
         }
         setEdits(formValues);
     };
@@ -56,20 +65,25 @@ function ViewDetails() {
     const EditSubmit = (event) => {
         event.preventDefault();
 
-        const data = {
-            name: edits.name,
-            nic: edits.nic,
-            mobile: edits.mobile,
-            model: edits.model,
-            plate: edits.plate
-        };
-        console.log(data);
-
-        axios.put(`http://localhost:5000/api/update/${editID}`, data).then((res) => {
-            window.location.reload();
-        }).catch((err) => {
-            console.log(err);
-        })
+        if (useRegex(edits.plate)) {
+            
+            const data = {
+                name: edits.name,
+                nic: edits.nic,
+                mobile: edits.mobile,
+                model: edits.model,
+                plate: edits.plate
+            };
+            console.log(data);
+    
+            axios.put(`http://localhost:5000/api/update/${editID}`, data).then((res) => {
+                window.location.reload();
+            }).catch((err) => {
+                console.log(err);
+            })
+        }else {
+            setError("Add a valid plate number");
+        }
     }
 
     const DeleteVehicles = (event, id) => {
@@ -92,6 +106,8 @@ function ViewDetails() {
                     <Form.Group className='text-center'>
                         <h2>Vehicle Details</h2><br/>
                     </Form.Group>
+                    
+                    {error && <div id="error"><h6>{error}</h6></div>}
 
                     <Table className="table table-striped table-bordered table-hover">
                         <thead>
@@ -101,6 +117,7 @@ function ViewDetails() {
                                 <th>Mobile Number</th>
                                 <th>Vehicle Model</th>
                                 <th>Vehicle Plate</th>
+                                <th>Plate Type</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -156,6 +173,7 @@ function ViewDetails() {
                                         onChange={EditDetails}
                                         required />
                                     </td>
+                                    <td>{edits.variant}</td>
                                     <td>
                                         <Button className='btn btn-success' type='submit'>Save</Button>
                                     </td>
@@ -167,6 +185,7 @@ function ViewDetails() {
                                     <td>{vehicle.mobile}</td>
                                     <td>{vehicle.model}</td>
                                     <td>{vehicle.plate}</td>
+                                    <td>{vehicle.variant}</td>
                                     <td>
                                         <Button type='button' onClick={(event) => EditClick(event, vehicle)} className="btn btn-warning">Edit</Button>
                                     </td>
