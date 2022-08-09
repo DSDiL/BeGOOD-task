@@ -1,10 +1,40 @@
-#form {
+.container-sm {
     background-color: aliceblue;
-    padding: 5%;
-    margin: 5%;
 }
 
-.submit {
+.row.row.g-4.justify-content-center {
+    margin: 2%;
+}
+
+.table.table-borderless {
     text-align: center;
-    padding-top: 2%;
+}
+
+#td1 {
+    text-align: right;
+}
+
+#td2 {
+    text-align: center;
+    width: 40%;
+}
+
+#td3 {
+    text-align: left;
+}
+
+.table.table-striped.table-bordered.table-hover {
+    text-align: center;
+}
+
+#error {
+    background-color: red;
+    text-align: center;
+    padding: 3%;
+}
+
+#success {
+    background-color: green;
+    text-align: center;
+    padding: 3%;
 }
